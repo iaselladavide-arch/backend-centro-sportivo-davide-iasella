@@ -18,9 +18,9 @@ app.post('/test', (req, res) => {
 });
 
 app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/clienti', require('./routes/clienteRoutes'));
-app.use('/api/campi', require('./routes/campoRoutes'));
-app.use('/api/prenotazioni', require('./routes/prenotazioneRoutes'));
+//app.use('/api/clienti', require('./routes/clienteRoutes'));
+//app.use('/api/campi', require('./routes/campoRoutes'));
+//app.use('/api/prenotazioni', require('./routes/prenotazioneRoutes'));
 app.use('/api/operatori', require('./routes/operatoreRoutes'));
 app.use('/api/public', require('./routes/publicRoutes'));
 

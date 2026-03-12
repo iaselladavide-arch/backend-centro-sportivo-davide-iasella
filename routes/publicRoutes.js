@@ -1,23 +1,32 @@
 const express = require('express');
 const router = express.Router();
-const Prenotazione = require('../models/Prenotazione');
+const Consegna = require('../models/Consegna');
 
-router.get('/verifica-prenotazione', async (req, res) => {
-  const { codice } = req.query;
+//GET
+router.get('/tracking', async (req, res) => {
   try {
-    const pren = await Prenotazione.findOne({ codicePrenotazione: codice })
-      .populate('campo', 'nome tipo');
-    
-    if (!pren) return res.status(404).json({ msg: "Codice non trovato" });
-    
+    const { chiaveConsegna, dataRitiro } = req.query;
+
+    if (!chiaveConsegna || !dataRitiro) {
+      return res.status(400).json({ error: "Parametri mancanti" });
+    }
+
+    const consegna = await Consegna.findOne({ 
+      chiaveConsegna: chiaveConsegna, 
+      dataRitiro: dataRitiro 
+    });
+
+    if (!consegna) {
+      return res.status(404).json({ message: "Consegna non trovata" });
+    }
+
     res.json({
-      data: pren.data,
-      orario: `${pren.oraInizio} - ${pren.oraFine}`,
-      campo: pren.campo.nome,
-      stato: pren.stato
+      stato: consegna.stato,
+      dataRitiro: consegna.dataRitiro,
+      dataConsegna: consegna.dataConsegna
     });
   } catch (err) {
-    res.status(500).send("Errore server");
+    res.status(500).json({ error: err.message });
   }
 });
 

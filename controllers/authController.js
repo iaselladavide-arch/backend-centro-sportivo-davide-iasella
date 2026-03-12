@@ -5,15 +5,15 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // 1. Cerca l'operatore
+    //Cerca l'operatore
     const operatore = await Operatore.findOne({ email });
     if (!operatore) return res.status(400).json({ msg: 'Credenziali non valide' });
 
-    // 2. Verifica password
+    //Verifica password
     const isMatch = await operatore.comparePassword(password);
     if (!isMatch) return res.status(400).json({ msg: 'Credenziali non valide' });
 
-    // 3. Crea il Token JWT
+    //Crea il Token JWT
     const payload = { 
       id: operatore._id, 
       isAdmin: operatore.isAdmin 

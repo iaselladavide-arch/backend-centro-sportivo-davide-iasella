@@ -1,7 +1,7 @@
 const Prenotazione = require('../models/Prenotazione');
 const generateCode = require('../utils/generateCode');
 
-// 1. CREA PRENOTAZIONE
+//CREA PRENOTAZIONE
 exports.createPrenotazione = async (req, res) => {
   try {
     const { data, oraInizio, oraFine, campo, cliente } = req.body;
@@ -28,7 +28,6 @@ exports.createPrenotazione = async (req, res) => {
 
     await nuovaPrenotazione.save();
     
-    // Restituiamo l'oggetto popolato per comodità del frontend
     const risultato = await Prenotazione.findById(nuovaPrenotazione._id)
       .populate('cliente')
       .populate('campo');
@@ -39,7 +38,7 @@ exports.createPrenotazione = async (req, res) => {
   }
 };
 
-// 2. LISTA PRENOTAZIONI (con filtri)
+//LISTA PRENOTAZIONI
 exports.getPrenotazioni = async (req, res) => {
   try {
     const { data, campo, stato } = req.query;
@@ -60,13 +59,13 @@ exports.getPrenotazioni = async (req, res) => {
   }
 };
 
-// 3. AGGIORNA PRENOTAZIONE
+//AGGIORNA PRENOTAZIONE
 exports.updatePrenotazione = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
 
-    // Se vengono modificati orari, data o campo, verifichiamo che non ci siano conflitti
+    //Controllo conflitti
     if (updateData.data || updateData.oraInizio || updateData.oraFine || updateData.campo) {
       const attuale = await Prenotazione.findById(id);
       if (!attuale) return res.status(404).json({ msg: "Prenotazione non trovata" });
@@ -77,7 +76,7 @@ exports.updatePrenotazione = async (req, res) => {
       const c = updateData.campo || attuale.campo;
 
       const overlap = await Prenotazione.findOne({
-        _id: { $ne: id }, // Esclude se stessa dal controllo sovrapposizione
+        _id: { $ne: id },
         campo: c,
         data: d,
         stato: { $ne: 'annullata' },
@@ -104,7 +103,7 @@ exports.updatePrenotazione = async (req, res) => {
   }
 };
 
-// 4. ELIMINA PRENOTAZIONE
+//ELIMINA PRENOTAZIONE
 exports.deletePrenotazione = async (req, res) => {
   try {
     const eliminata = await Prenotazione.findByIdAndDelete(req.params.id);
